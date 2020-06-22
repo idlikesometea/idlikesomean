@@ -5,7 +5,7 @@
         matInput
         type="text"
         name="title"
-        ngModel
+        [ngModel]="post?.title"
         minlength="3"
         placeholder="Post title"
         required
@@ -18,7 +18,7 @@
         rows="4"
         name="content"
         placeholder="Post content"
-        ngModel
+        [ngModel]="post?.content"
         required
         #content="ngModel"></textarea>
         <mat-error *ngIf="content.invalid">Please add a post content</mat-error>
