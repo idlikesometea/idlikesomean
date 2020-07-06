@@ -13,6 +13,7 @@ export class LoginComponent {
 
   onLogin(form: NgForm) {
     if (form.invalid) return false;
+    this.isLoading = true;
     this.authService.login(form.value.email, form.value.password);
   }
 }

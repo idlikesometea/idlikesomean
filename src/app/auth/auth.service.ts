@@ -2,13 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { AuthData } from './auth.model';
+import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: "root"
 })
 export class AuthService {
   private token: string;
-  constructor(private httpClient: HttpClient) {}
+  private authStatus = new Subject<boolean>();
+  private authed: boolean = false;
+  constructor(private httpClient: HttpClient, private router: Router) {}
 
   createUser(email:string, password:string) {
     const authData: AuthData = {email:email, password:password};
@@ -24,10 +28,30 @@ export class AuthService {
       .subscribe(response => {
         const token = response.token;
         this.token = token;
+        if (response.token) {
+          this.authed = true;
+          this.authStatus.next(true);
+          this.router.navigate(['/']);
+        }
       });
+  }
+
+  logout() {
+    this.token = null;
+    this.authed = false;
+    this.authStatus.next(false);
+    this.router.navigate(['/']);
   }
 
   getToken() {
     return this.token;
+  }
+
+  getAuthStatus() {
+    return this.authStatus.asObservable();
+  }
+
+  isAuthed() {
+    return this.authed;
   }
 }
