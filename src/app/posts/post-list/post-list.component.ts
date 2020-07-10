@@ -20,6 +20,7 @@ export class PostListComponent implements OnInit{
   currentPage = 1;
   pageSizes = [1, 2, 5, 10];
   authed: boolean = false;
+  userId: string;
   authListener: Subscription;
   constructor(public postService:PostService, private authService: AuthService) {};
 
@@ -27,17 +28,18 @@ export class PostListComponent implements OnInit{
     this.isLoading = true;
     this.postService.getPosts(this.postPerPage, this.currentPage);
     this.postsSub = this.postService.getPostsUpdateListener()
-      .subscribe((postsData: {posts: Post[], total: number}) => {
-        this.isLoading = false;
-        this.posts = postsData.posts;
-        this.totalPosts = postsData.total;
-      });
+    .subscribe((postsData: {posts: Post[], total: number}) => {
+      this.isLoading = false;
+      this.posts = postsData.posts;
+      this.totalPosts = postsData.total;
+    });
 
     this.authed = this.authService.isAuthed();
-
+    this.userId = this.authService.getUserId();
     this.authListener = this.authService.getAuthStatus()
       .subscribe(authed => {
         this.authed = authed;
+        this.userId = this.authService.getUserId();
       })
   }
 
@@ -45,6 +47,8 @@ export class PostListComponent implements OnInit{
     this.isLoading = true;
     this.postService.deletePost(id).subscribe(() => {
       this.postService.getPosts(this.postPerPage, this.currentPage);
+    }, err => {
+      this.isLoading = false;
     });
   }
 
