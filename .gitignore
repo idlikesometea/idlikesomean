@@ -46,4 +46,5 @@ testem.log
 Thumbs.db
 
 /backend/images/*
+/backend/Archive.zip
 /nodemon.json
